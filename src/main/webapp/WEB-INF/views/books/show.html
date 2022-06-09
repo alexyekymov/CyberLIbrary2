@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Book</title>
+    <style>
+        p {
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+<p th:text="${book.getDescription() + ', ' + book.getAuthor() + ', ' + book.getCreated()}"></p>
+<div th:if="${book.getPersonId() == null}" th:text="'This book is free. Who do you wand to assign the book to?'"></div>
+
+<form th:if="${book.getPersonId() == null}" th:method="PATCH" th:action="@{/books/{id}/assign(id=${book.getId()})}">
+    <label for="book">Choose a person</label>
+    <select th:object="${person}" th:field="*{id}" id="book">
+        <option th:each="person : ${people}" th:value="${person.getId()}"
+                th:text="${person.getFullName()}"></option>
+    </select>
+    <input type="submit" value="Assign the book">
+</form>
+
+<div th:unless="${book.getPersonId() == null}" th:text="${'The book is now at ' + person.getFullName()}"></div>
+
+<form th:unless="${book.getPersonId() == null}" th:object="${book}" th:method="PATCH" th:action="@{/books/{id}(id=${book.getId()})}">
+    <input type="hidden" th:field="*{description}" th:value="*{description}">
+    <input type="hidden" th:field="*{author}" th:value="*{author}">
+    <input type="hidden" th:field="*{created}" th:value="*{created}">
+    <input type="submit" value="Release the book">
+</form>
+<hr>
+<form action="/books" th:action="@{/books/{id}/edit(id=${book.getId()})}">
+    <input type="submit" value="Edit">
+</form>
+
+<form th:method="DELETE" th:action="@{/books/{id}(id=${book.getId()})}">
+    <input type="submit" value="Delete">
+</form>
+
+<br>
+<form action="/books">
+    <input type="submit" value="Back to Books">
+</form>
+
+</body>
+</html>
