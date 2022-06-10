@@ -1,5 +1,6 @@
 package dev.overlax.cyberlibrary.config;
 
+import org.springframework.lang.NonNull;
 import org.springframework.web.filter.HiddenHttpMethodFilter;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
@@ -18,12 +19,13 @@ public class MySpringDispatcherInitializer extends AbstractAnnotationConfigDispa
     }
 
     @Override
+    @NonNull
     protected String[] getServletMappings() {
         return new String[]{"/"};
     }
 
     @Override
-    public void onStartup(ServletContext servletContext) throws ServletException {
+    public void onStartup(@NonNull ServletContext servletContext) throws ServletException {
         super.onStartup(servletContext);
         registerHiddenFieldFilter(servletContext);
     }

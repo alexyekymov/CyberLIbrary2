@@ -11,6 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/books")
@@ -33,15 +34,17 @@ public class BookController {
 
     @GetMapping("/{id}")
     public String show(@PathVariable int id, Model model, @ModelAttribute("person") Person person) {
-        Book book = bookDAO.show(id).get();
-        model.addAttribute("book", book);
+        Optional<Book> bookOpt = bookDAO.show(id);
+        bookOpt.ifPresent(book -> model.addAttribute("book", book));
 
-        if (book.getPersonId() == null) {
-            model.addAttribute("people", personDAO.index());
-        }
-        if (book.getPersonId() != null) {
-            model.addAttribute(personDAO.show(book.getPersonId()).get());
-        }
+        bookOpt.ifPresent(book -> {
+            if (book.getPersonId() == null) {
+                model.addAttribute("people", personDAO.index());
+            } else {
+                Optional<Person> personOpt = personDAO.show(book.getPersonId());
+                personOpt.ifPresent(p -> model.addAttribute("person", p));
+            }
+        });
 
         return "books/show";
     }
@@ -62,7 +65,8 @@ public class BookController {
 
     @GetMapping("/{id}/edit")
     public String edit(Model model, @PathVariable int id) {
-        model.addAttribute("book", bookDAO.show(id).get());
+        Optional<Book> bookOpt = bookDAO.show(id);
+        bookOpt.ifPresent(book -> model.addAttribute("book", book));
         return "/books/edit";
     }
 
