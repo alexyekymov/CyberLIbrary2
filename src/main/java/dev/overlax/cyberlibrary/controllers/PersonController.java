@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Optional;
 
 @Controller
@@ -42,7 +43,7 @@ public class PersonController {
     }
 
     @PostMapping
-    public String create(@ModelAttribute Person person, BindingResult bindingResult) {
+    public String create(@ModelAttribute("person") @Valid Person person, BindingResult bindingResult) {
         if (bindingResult.hasErrors())
             return "people/new";
         personDAO.save(person);
@@ -58,9 +59,12 @@ public class PersonController {
     }
 
     @PatchMapping("/{id}")
-    public String update(@PathVariable("id") int id, @ModelAttribute Person person, BindingResult bindingResult) {
+    public String update(@PathVariable("id") int id,
+                         @ModelAttribute("person") @Valid Person person,
+                         BindingResult bindingResult) {
         if (bindingResult.hasErrors())
             return "/people/edit";
+
         personDAO.edit(id, person);
         return "redirect:/people";
     }
