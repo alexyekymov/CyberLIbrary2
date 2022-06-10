@@ -17,13 +17,13 @@
 <body>
 <p th:text="${person.getFullName() + ', ' + person.getBirthDay()}"></p>
 
-<p th:if="${bookList==null}" th:text="'Person doesn\'t take any book'"></p>
+<p th:if="${books.isEmpty()}" th:text="'Person doesn\'t take any book'"></p>
 
-<div th:unless="${bookList==null}" th:text="'Books: '" class="books"></div>
-<div th:unless="${bookList==null}" th:each="book : ${bookList}"
+<div th:unless="${books.isEmpty()}" th:text="'Books: '" class="books"></div>
+<div th:unless="${books.isEmpty()}" th:each="book : ${books}"
      th:text="${book.description + ', ' + book.author + ', ' + book.created}"></div>
 
-<form action="/people" th:action="@{/people/{id}/edit(id=${person.getId()})}">
+<form th:method="GET" th:action="@{/people/{id}/edit(id=${person.getId()})}">
     <input type="submit" value="Edit">
 </form>
 

@@ -16,6 +16,14 @@ public class Person {
     @Max(value = 2022, message = "Max date of birth should be less than 2022.")
     private int birthDay;
 
+    public Person() {
+    }
+
+    public Person(String fullName, int birthDay) {
+        this.fullName = fullName;
+        this.birthDay = birthDay;
+    }
+
     public int getId() {
         return id;
     }

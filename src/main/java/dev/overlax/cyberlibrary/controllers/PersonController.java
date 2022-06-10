@@ -2,6 +2,7 @@ package dev.overlax.cyberlibrary.controllers;
 
 import dev.overlax.cyberlibrary.dao.PersonDAO;
 import dev.overlax.cyberlibrary.model.Person;
+import dev.overlax.cyberlibrary.util.PersonValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,10 +16,12 @@ import java.util.Optional;
 @RequestMapping("/people")
 public class PersonController {
     private final PersonDAO personDAO;
+    private final PersonValidator personValidator;
 
     @Autowired
-    public PersonController(PersonDAO personDAO) {
+    public PersonController(PersonDAO personDAO, PersonValidator personValidator) {
         this.personDAO = personDAO;
+        this.personValidator = personValidator;
     }
 
     @GetMapping
@@ -30,22 +33,24 @@ public class PersonController {
     @RequestMapping("/{id}")
     public String show(@PathVariable("id") int id, Model model) {
         Optional<Person> personOpt = personDAO.show(id);
-        personOpt.ifPresent(model::addAttribute);
+        personOpt.ifPresent(person -> model.addAttribute("person", person));
 
-        model.addAttribute(personDAO.bookIndex(id));
+        model.addAttribute("books", personDAO.bookIndex(id));
         return "people/show";
     }
 
     @GetMapping("/new")
-    public String newPerson(Model model) {
-        model.addAttribute(new Person());
+    public String newPerson(@ModelAttribute("person") Person person) {
         return "people/new";
     }
 
     @PostMapping
     public String create(@ModelAttribute("person") @Valid Person person, BindingResult bindingResult) {
+        personValidator.validate(person, bindingResult);
+
         if (bindingResult.hasErrors())
             return "people/new";
+
         personDAO.save(person);
         return "redirect:/people";
     }
@@ -62,6 +67,8 @@ public class PersonController {
     public String update(@PathVariable("id") int id,
                          @ModelAttribute("person") @Valid Person person,
                          BindingResult bindingResult) {
+        personValidator.validate(person, bindingResult);
+
         if (bindingResult.hasErrors())
             return "/people/edit";
 
