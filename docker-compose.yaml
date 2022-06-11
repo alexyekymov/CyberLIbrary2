@@ -1,0 +1,15 @@
+version: '3'
+services:
+
+  cyber-lib:
+    image: cyber-lib
+    restart: always
+    container_name: cyber-library
+    networks:
+      over-net:
+    ports:
+      - "80:8081"
+    build:
+      context: ./
+    volumes:
+      - ./src/:/usr/local/tomcat/cyber-library
