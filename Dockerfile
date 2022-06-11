@@ -11,7 +11,7 @@ RUN mvn -f /home/app/pom.xml clean package
 
 FROM tomcat:9-jdk8-openjdk
 
-COPY --from=build /home/app/target/cyber-library.war /usr/local/tomcat/webapps
+COPY --from=build /home/app/target/CyberLibrary.war /usr/local/tomcat/webapps
 
 EXPOSE 8081
 
